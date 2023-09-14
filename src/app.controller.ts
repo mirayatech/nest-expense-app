@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Body,
+  HttpCode,
 } from '@nestjs/common';
 import { data } from './data';
 import { ReportTypeEnum } from './type';
@@ -70,6 +71,7 @@ export class AppController {
     return data.report[reportIndex];
   }
 
+  @HttpCode(204)
   @Delete(':id')
   deleteIncomeReport(@Param('id') id: string) {
     const reportIndex = data.report.findIndex((report) => report.id === id);
