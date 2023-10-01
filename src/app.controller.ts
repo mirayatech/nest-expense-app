@@ -12,14 +12,18 @@ import {
 } from '@nestjs/common';
 import { ReportTypeEnum } from './data';
 import { AppService } from './app.service';
-
+import {
+  CreateReportDto,
+  ReportResponseDto,
+  UpdateReportDto,
+} from './dtos/report.dto';
 @Controller('report/:type')
 export class AppController {
   constructor(private readonly appService: AppService) {}
   @Get()
   getAllReports(
     @Param('type', new ParseEnumPipe(ReportTypeEnum)) type: string,
-  ) {
+  ): ReportResponseDto[] {
     const reportType =
       type === 'income' ? ReportTypeEnum.INCOME : ReportTypeEnum.EXPENSE;
     return this.appService.getAllReports(reportType);
@@ -29,7 +33,7 @@ export class AppController {
   getIncomeReport(
     @Param('type', new ParseEnumPipe(ReportTypeEnum)) type: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  ): ReportResponseDto {
     console.log(id, typeof id);
     const reportType =
       type === 'income' ? ReportTypeEnum.INCOME : ReportTypeEnum.EXPENSE;
@@ -38,14 +42,14 @@ export class AppController {
 
   @Post('')
   createIncomeReport(
-    @Body() body: { amount: number; source: string },
+    @Body() { amount, source }: CreateReportDto,
     @Param('type', new ParseEnumPipe(ReportTypeEnum)) type: string,
-  ) {
+  ): ReportResponseDto {
     const reportType =
       type === 'income' ? ReportTypeEnum.INCOME : ReportTypeEnum.EXPENSE;
     return this.appService.createReport(reportType, {
-      amount: body.amount,
-      source: body.source,
+      amount: amount,
+      source: source,
     });
   }
 
@@ -53,8 +57,9 @@ export class AppController {
   updateIncomeReport(
     @Param('type', new ParseEnumPipe(ReportTypeEnum)) type: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: { amount: number; source: string },
-  ) {
+    @Body() body: UpdateReportDto,
+  ): ReportResponseDto {
+    console.log(body);
     const reportType =
       type === 'income' ? ReportTypeEnum.INCOME : ReportTypeEnum.EXPENSE;
     return this.appService.updateReport(reportType, id, {
