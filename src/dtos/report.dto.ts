@@ -5,7 +5,7 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { ReportTypeEnum } from 'src/data';
 
 export class CreateReportDto {
@@ -34,11 +34,18 @@ export class ReportResponseDto {
   id: string;
   source: string;
   amount: number;
+  type: ReportTypeEnum;
+
+  @Expose({ name: 'createdAt' })
+  transformCreatedAt() {
+    return this.created_at;
+  }
+
+  @Exclude()
   created_at: Date;
 
   @Exclude()
   updated_at: Date;
-  type: ReportTypeEnum;
 
   constructor(partial: Partial<ReportResponseDto>) {
     Object.assign(this, partial);
