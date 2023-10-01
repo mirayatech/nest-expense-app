@@ -3,8 +3,6 @@ import { map } from 'rxjs';
 
 export class CustomInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, handler: CallHandler) {
-    console.log('Before...: Its intercepting the request');
-    console.log('context', context);
     return handler.handle().pipe(
       map((data) => {
         const repsonse = {
