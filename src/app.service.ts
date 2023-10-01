@@ -14,7 +14,7 @@ export class AppService {
       .find((report) => report.id === id);
   }
 
-  cretaeReport(type: ReportTypeEnum, body: { amount: number; source: string }) {
+  createReport(type: ReportTypeEnum, body: { amount: number; source: string }) {
     const newReport = {
       id: uuid(),
       source: body.source,
