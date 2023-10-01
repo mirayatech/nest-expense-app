@@ -1,20 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { ReportTypeEnum, data } from './data';
 import { v4 as uuid } from 'uuid';
+import { ReportResponseDto } from './dtos/report.dto';
 
 @Injectable()
 export class AppService {
-  getAllReports(type: ReportTypeEnum) {
-    return data.report.filter((report) => report.type === type);
-  }
-
-  getReportById(type: ReportTypeEnum, id: string) {
+  getAllReports(type: ReportTypeEnum): ReportResponseDto[] {
     return data.report
       .filter((report) => report.type === type)
-      .find((report) => report.id === id);
+      .map((report) => new ReportResponseDto(report));
   }
 
-  createReport(type: ReportTypeEnum, body: { amount: number; source: string }) {
+  getReportById(type: ReportTypeEnum, id: string): ReportResponseDto {
+    const report = data.report
+      .filter((report) => report.type === type)
+      .find((report) => report.id === id);
+
+    if (!report) return;
+    return new ReportResponseDto(report);
+  }
+
+  createReport(
+    type: ReportTypeEnum,
+    body: { amount: number; source: string },
+  ): ReportResponseDto {
     const newReport = {
       id: uuid(),
       source: body.source,
@@ -24,14 +33,14 @@ export class AppService {
       type,
     };
     data.report.push(newReport);
-    return newReport;
+    return new ReportResponseDto(newReport);
   }
 
   updateReport(
     type: ReportTypeEnum,
     id: string,
-    body: { amount: number; source: string },
-  ) {
+    body: { amount?: number; source?: string },
+  ): ReportResponseDto {
     const reportToUpdate = data.report
       .filter((report) => report.type === type)
       .find((report) => report.id === id);
@@ -48,7 +57,7 @@ export class AppService {
       updated_at: new Date(),
     };
 
-    return data.report[reportIndex];
+    return new ReportResponseDto(data.report[reportIndex]);
   }
 
   deleteReport(id: string) {
